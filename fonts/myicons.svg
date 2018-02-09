@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="myicons" horiz-adv-x="256">
+    <font-face font-family="myicons"
+      units-per-em="256" ascent="256"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="simple-add"
+      unicode="&#xEA02;"
+      horiz-adv-x="256" d="M240 144H144V240C144 249.6 137.6 256 128 256S112 249.6 112 240V144H16C6.4 144 0 137.6 0 128S6.4 112 16 112H112V16C112 6.4 118.4 0 128 0S144 6.4 144 16V112H240C249.6 112 256 118.4 256 128S249.6 144 240 144z" />
+  </font>
+</defs>
+</svg>

@@ -1,0 +1,585 @@
+/* http://jsfiddle.net/MadLittleMods/QAnmN/ */
+/* https://jsfiddle.net/jegn4x0f/5/  == https://stackoverflow.com/questions/36388485/using-css-transform-scale-to-zoom-into-an-element-without-cropping-maintainin */
+
+
+
+
+@import 'reset.css';
+
+:root {
+    --brand-primary: #360dff;
+    --brand-inverse: #2f2a24;
+    --brand-white: #fff;
+
+    --border-base: .125em;
+    --bg-opacity: rgba(255, 255, 255, .25);
+    --bg-opaque: rgba(255, 255, 255, .25);
+
+    --brand-typeface: 'industry', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+
+body, 
+html {
+    height: 100%;
+    width: 100%;
+    background: var(--brand-inverse);
+    font-family: var(--brand-typeface);
+}
+
+
+
+
+
+
+
+*,
+*:after,
+*::before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html, 
+body, 
+.container, 
+.scroller {
+	height: 100%;
+}
+
+.scroller {
+	/* overflow-y: scroll; */
+}
+
+.scroller,
+.scroller-inner {
+	position: relative;
+}
+
+.container {
+	position: relative;
+	overflow: hidden;
+	background: var(--brand-inverse);
+}
+
+.menu-trigger {
+	position: relative;
+    padding-left: 60px;
+    height: 32px;
+    width: 32px;
+    display: block;
+    background-color: white;
+}
+
+.menu-trigger:before {
+	/* position: absolute;
+	top: 2px;
+	left: 0;
+	width: 40px;
+	height: 6px;
+	background: #fff;
+	box-shadow: 0 6px #34495e, 0 12px #fff, 0 18px #34495e, 0 24px #fff;
+	content: ''; */
+}
+
+.mp-pusher {
+	position: relative;
+	left: 0;
+	height: 100%;
+}
+
+.mp-menu {
+	position: absolute; /* we can't use fixed here :( */
+	top: 0;
+	left: 0;
+	z-index: 1;
+	width: 300px;
+	height: 100%;
+	-webkit-transform: translate3d(-100%, 0, 0);
+	-moz-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+
+    border-right: 1px solid rgba(0, 0, 0, .25);
+
+}
+
+.mp-level {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+    background-color: var(--brand-inverse);
+    
+	-webkit-transform: translate3d(-100%, 0, 0);
+	-moz-transform: translate3d(-100%, 0, 0);
+	transform: translate3d(-100%, 0, 0);
+}
+
+/* overlays for pusher and for level that gets covered */
+.mp-pusher::after,
+.mp-level::after,
+.mp-level::before {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 0;
+	height: 0;
+	content: '';
+	opacity: 0;
+}
+
+.mp-pusher::after,
+.mp-level::after {
+	background: rgba(0,0,0,0.3);
+	-webkit-transition: opacity 0.3s, width 0.1s 0.3s, height 0.1s 0.3s;
+	-moz-transition: opacity 0.3s, width 0.1s 0.3s, height 0.1s 0.3s;
+	transition: opacity 0.3s, width 0.1s 0.3s, height 0.1s 0.3s;
+}
+
+.mp-level::after {
+	z-index: -1;
+}
+
+.mp-pusher.mp-pushed::after,
+.mp-level.mp-level-overlay::after {
+	width: 100%;
+	height: 100%;
+	opacity: 1;
+	-webkit-transition: opacity 0.3s;
+	-moz-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+}
+
+.mp-level.mp-level-overlay {
+	cursor: pointer;
+}
+
+.mp-level.mp-level-overlay.mp-level::before {
+	width: 100%;
+	height: 100%;
+	background: transparent;
+	opacity: 1;
+}
+
+.mp-pusher,
+.mp-level {
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+	transition: all 0.5s;
+}
+
+/* overlap */
+.mp-overlap .mp-level.mp-level-open {
+	/* box-shadow: 1px 0 2px rgba(0,0,0,0.2); */
+	-webkit-transform: translate3d(-40px, 0, 0);
+	-moz-transform: translate3d(-40px, 0, 0);
+	transform: translate3d(-40px, 0, 0);
+}
+
+/* First level */
+.mp-menu > .mp-level,
+.mp-menu > .mp-level.mp-level-open,
+.mp-menu.mp-overlap > .mp-level,
+.mp-menu.mp-overlap > .mp-level.mp-level-open {
+	box-shadow: none;
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}
+
+/* cover */
+.mp-cover .mp-level.mp-level-open {
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}
+
+.mp-cover .mp-level.mp-level-open > ul > li > .mp-level:not(.mp-level-open) {
+	-webkit-transform: translate3d(-100%, 0, 0);
+	-moz-transform: translate3d(-100%, 0, 0);
+	transform: translate3d(-100%, 0, 0);
+}
+
+/* content style */
+.mp-menu ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* .mp-menu h2 {
+	margin: 0;
+	padding: 1em;
+	color: rgba(0,0,0,0.4);
+	text-shadow: 0 0 1px rgba(0,0,0,0.1);
+	font-weight: 300;
+	font-size: 2em;
+} */
+
+/* .mp-menu.mp-overlap h2::before {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin-right: 8px;
+	font-size: 75%;
+	line-height: 1.8;
+	opacity: 0;
+	-webkit-transition: opacity 0.3s, -webkit-transform 0.1s 0.3s;
+	-moz-transition: opacity 0.3s, -moz-transform 0.1s 0.3s;
+	transition: opacity 0.3s, transform 0.1s 0.3s;
+	-webkit-transform: translateX(-100%);
+	-moz-transform: translateX(-100%);
+	transform: translateX(-100%);
+} */
+
+/* .mp-menu.mp-cover h2 {
+	text-transform: uppercase;
+	font-weight: 700;
+	letter-spacing: 1px;
+	font-size: 1em;
+} */
+
+/* .mp-overlap .mp-level.mp-level-overlay > h2::before {
+	opacity: 1;
+	-webkit-transition: -webkit-transform 0.3s, opacity 0.3s;
+	-moz-transition: -moz-transform 0.3s, opacity 0.3s;
+	transition: transform 0.3s, opacity 0.3s;
+	-webkit-transform: translateX(0);
+	-moz-transform: translateX(0);
+	transform: translateX(0);
+} */
+
+
+.mp-menu ul li > a {
+    display: block;
+    
+	/* padding: 0.7em 1em 0.7em 1.8em; */
+	outline: none;
+	/* box-shadow: inset 0 -1px rgba(0,0,0,0.2); */
+	/* text-shadow: 0 0 1px rgba(255,255,255,0.1); */
+    /* font-size: 1.4em; */
+
+    text-decoration: none;
+    text-transform: uppercase;
+    /* color: var(--brand-white); */
+    color: rgba(255, 255, 255, .5);
+    font-size: 1em;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 1em;
+
+
+	-webkit-transition: background 0.3s, box-shadow 0.3s;
+	-moz-transition: background 0.3s, box-shadow 0.3s;
+    transition: background 0.3s, box-shadow 0.3s;
+    
+}
+
+.mp-menu ul li::before {
+    position: absolute;
+    top: 0; right: 0;
+	left: 10px;
+	z-index: -1;
+    color: rgba(0,0,0,0.2);
+    color: white;
+    line-height: 3.5;
+}
+
+.mp-level > ul > li:first-child > a {
+	box-shadow: inset 0 -1px rgba(0,0,0,0.2), inset 0 1px rgba(0,0,0,0.2);
+}
+
+
+
+.mp-menu ul li a:hover,
+.mp-level > ul > li:first-child > a:hover {
+    /* color: var(--brand-primary); */
+    color: rgba(255, 255, 255, 1);
+}
+
+.mp-menu .mp-level.mp-level-overlay > ul > li > a,
+.mp-level.mp-level-overlay > ul > li:first-child > a {
+	/* box-shadow: inset 0 -1px rgba(0,0,0,0); */
+}
+
+.mp-level > ul > li:first-child > a:hover,
+.mp-level.mp-level-overlay > ul > li:first-child > a {
+	/* box-shadow: inset 0 -1px rgba(0,0,0,0), inset 0 1px rgba(0,0,0,0); */
+} /* seems like Chrome 34.0.1847.131 needs the second shadow otherwise the transition breaks */
+
+
+
+
+.mp-back {
+	background: rgba(0,0,0,0.1);
+	outline: none;
+	color: #fff;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 700;
+	display: block;
+	font-size: 0.8em;
+	padding: 1em;
+	position: relative;
+	box-shadow: inset 0 1px rgba(0,0,0,0.1);
+	-webkit-transition: background 0.3s;
+	-moz-transition: background 0.3s;
+	transition: background 0.3s;
+}
+
+.mp-back::after {
+	font-family: 'linecons';
+	position: absolute;
+	content: "\e037";
+	right: 10px;
+	font-size: 1.3em;
+	color: rgba(0,0,0,0.3);
+}
+
+.mp-menu .mp-level.mp-level-overlay > .mp-back,
+.mp-menu .mp-level.mp-level-overlay > .mp-back::after {
+	background: transparent;
+	box-shadow: none;
+	color: transparent;
+}
+
+/* Fallback example for browsers that don't support 3D transforms (and no JS fallback) */
+/* We'll show the first level only */
+.no-csstransforms3d .mp-pusher,
+.no-js .mp-pusher {
+	padding-left: 300px;
+}
+
+.no-csstransforms3d .mp-menu .mp-level,
+.no-js .mp-menu .mp-level {
+	display: none;
+}
+
+.no-csstransforms3d .mp-menu > .mp-level,
+.no-js .mp-menu > .mp-level {
+	display: block;
+}
+
+
+
+
+.mp-menu ul li {
+    /* background-color: red; */
+    /* position: relative; */
+}
+
+
+.avatar {
+    display: block;
+    float: left;
+    margin-right: 10px;
+    /* position: absolute; */
+    /* position: relative; */
+    top: 0; left: 0;
+    display: none;
+}
+
+
+
+.test {
+    /* position: relative; */
+    /* display: block; */
+}
+
+/* .test:before {
+    color: #fff;
+    content: '\ea02';
+    display: block;
+    font-family: 'myicons';
+    font-size: 1em;
+    position: absolute;
+    top: 0; right: 1.25em;
+    line-height: 48px;
+} */
+
+
+/* .mp-menu .nc-icon {
+    position: absolute;
+    top: 0; right: 0;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul .inner {
+  padding-left: 1em;
+  overflow: hidden;
+  display: none;
+}
+
+ul .inner.show {
+  
+}
+
+
+ul li ul li:first-child { border-top: 1px solid rgba(255, 255, 255, .25); }
+ul li ul li:last-child { border-bottom: 0; }
+
+ul li {
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .25);
+}
+
+ul li a.toggle {
+  width: 100%;
+  display: block;
+  color: #fefefe;
+  transition: all 300ms ease;
+}
+ */
+
+
+
+
+
+
+
+
+
+
+
+/* 
+    binary tree
+*/
+/* .binary ul { margin-top: 1.25em; }
+
+.binary ul li {
+    display: inline-block;
+    width: 100%;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.binary ul > li {
+    border-bottom: 2px solid white;
+}
+
+.binary ul li span {
+}
+
+.binary ul li.left, 
+.binary ul li.right { width: 100%; }
+
+
+.binary-avatar {
+    float: left;
+    display: block;
+}
+
+.binary-label {
+    display: block;
+    text-align: center;
+    float: left;
+}
+
+
+ */
+
+
+
+
+
+
+
+
+/* 
+.binary li:only-child::after, 
+.binary li:only-child::before { display: none; }
+
+.binary li:only-child { padding-top: 0;}
+
+.binary li:first-child::before, 
+.binary li:last-child::after{ border: 0 none; }
+
+.binary li:last-child::before { border-right: var(--border-base) solid var(--bg-opacity); }
+
+
+
+.binary li .tree-avatar { 
+    border-radius: 25em;
+    background-color: var(--brand-inverse);
+    border: 3px solid var(--bg-opacity);
+    padding: .625em;
+    z-index: 1;
+    position: relative;
+    transition: all 250ms ease-in-out; 
+}
+
+.binary li .tree-avatar:hover, 
+.binary li .tree-avatar:hover + ul li .tree-avatar,
+.binary li span:hover+ul li .tree-avatar {
+    border-color: var(--brand-white);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+
+
+
+@media(min-width: 576px ) {
+
+    .binary ul li span { background-color: transparent }
+    .binary ul li ul { display: block }
+
+    .binary ul li.left { float: left }
+    .binary ul li.right { float: right }
+
+    .binary ul li.left, 
+    .binary ul li.right {
+        width: 50%;
+    }
+
+    .binary ul ul:before {
+        content: '';
+        position: absolute; 
+        display: block;
+        width: var(--border-base);
+        height: 5.375em;
+        background-color: var(--bg-opaque);
+        top: 0; left: 50%;
+    }
+
+    .binary li::before, 
+    .binary li::after{
+        content: '';
+        position: absolute; 
+        top: -.625em; right: calc(50% - .25em );
+        border-top: var(--border-base) solid var(--bg-opacity);
+        width: 50%; height: 20px;
+    }
+
+    .binary li::after{
+        right: auto; left: 50%;
+        border-left: var(--border-base) solid var(--bg-opacity);
+    }
+
+
+    .binary li .tree-avatar {
+        margin: 0 auto;
+    }
+
+
+} */
