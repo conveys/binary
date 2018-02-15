@@ -49,12 +49,23 @@ img {
 	height: 100%;
 }
 
+.tree-msg {
+	width: 100%;
+	text-align: center;
+	color: white;
+	font-size: 1.25em;
+	line-height: 1.25em;
+	font-weight: 300;
+}
+
 .binary {
 	padding: 0; 
 	margin: 0;
 	display: none;
 	width: 100%;
 	text-align: center;
+	list-style: none;
+	/* background-color: blue; */
 }
 
 /* 
@@ -63,7 +74,8 @@ img {
 @media only screen 
 	and (orientation : landscape) { 
 		
-		.binary { display: block; }
+		.binary { display: block }
+		.tree-msg { display: none }
 
 }
 
@@ -109,12 +121,12 @@ img {
 	height: 2px;
 	background-color: white;
 	position: absolute;
-	top: 120px; left: 50%;
+	top: 105px; left: 50%;
 	transform: translate(-50%, -50%);
 }
 
 /* adjusting second level bottom border */
-.binary ul li::after { top: 105px; }
+/* .binary ul li::after { top: 105px; } */
 
 /* hidding last children bottom borders */
 .binary ul li li::after { display: none }
@@ -147,7 +159,10 @@ img {
 /* resize width of uls */
 .binary li a { width: 25%; }
 .binary ul li a { width: 50%; }
-.binary ul ul li a { width: 90%; }
+.binary ul ul li a { 
+	width: 90%; 
+	margin-bottom: 0;
+}
 
 .binary ul li:nth-child(odd) { float: left; }
 .binary ul li:nth-child(even) { float: right; }
@@ -199,3 +214,23 @@ img {
 	text-align: center;
 }
 .binary-card-footer span:last-child { border-left: 1px solid var(--brand-opaque); }
+
+
+
+/* ========================================================================== */
+.btn {	
+	padding: 10px 20px;
+	background-color: var(--brand-primary);
+	color: white;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-size: .75em;
+	font-weight: 600;
+	letter-spacing: 1px;
+	border-radius: 4px;
+}
+
+.btn-fixed {
+	position: fixed;
+	top: .625em; left: .625em;
+}
